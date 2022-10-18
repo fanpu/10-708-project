@@ -4,6 +4,7 @@ import pickle
 import ipdb
 import numpy as np
 import yfinance as yf
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from sp500_tickers import sp500_tickers
@@ -40,6 +41,9 @@ class Ticker():
     def has_expected_trading_days(self):
         return self.trading_days == EXPECTED_TRADING_DAYS
 
+    def closing_hist(self):
+        return self.hist["Close"].to_numpy()
+
 
 class Baseline():
     def __init__(self, start_date="2010-01-01", end_date="2022-01-01"):
@@ -59,13 +63,35 @@ class Baseline():
     def compute_correlation(self):
         """Computes the Pearson product-moment correlation coefficients of all tickers
         """
-        ticker_names = [ticker.symbol for ticker in self.tickers_to_analyze]
+        ticker_labels = np.array(
+            [ticker.symbol for ticker in self.tickers_to_analyze])
         print(
-            f"Computing correlation for the following {len(ticker_names)} tickers", ticker_names)
-        M = np.zeros(len(self.tickers_to_analyze), EXPECTED_TRADING_DAYS)
-        for ticker in tqdm(self.tickers_to_analyze):
-            ipdb.set_trace()
-            pass
+            f"Computing correlation for the following {len(ticker_labels)} tickers", ticker_labels)
+        M = np.zeros((len(self.tickers_to_analyze), EXPECTED_TRADING_DAYS))
+        for i, ticker in enumerate(tqdm(self.tickers_to_analyze)):
+            M[i] = ticker.closing_hist()
+        corr = np.corrcoef(M)
+        print("Correlation matrix:", corr)
+        self.plot_correlation(corr, ticker_labels)
+
+    def plot_correlation(self, corr, labels):
+        figure = plt.figure()
+        axes = figure.add_subplot(111)
+
+        caxes = axes.matshow(corr)  # , interpolation='nearest')
+        figure.colorbar(caxes)
+
+        step = 25
+        tick_range = np.arange(0, len(labels), step)
+        tick_labels = labels[tick_range]
+        axes.set_xticklabels(tick_labels)
+        axes.set_yticklabels(tick_labels)
+        axes.set_xticks(tick_range)
+        axes.set_yticks(tick_range)
+
+        axes.set_title("Pearson correlation of selected stocks from S&P500")
+        plt.show()
+        plt.savefig("sp500_correlation.png")
 
 
 if __name__ == '__main__':
