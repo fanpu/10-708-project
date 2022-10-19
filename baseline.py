@@ -90,8 +90,8 @@ class Baseline():
         axes.set_yticks(tick_range)
 
         axes.set_title("Pearson correlation of selected stocks from S&P500")
-        plt.show()
         plt.savefig("sp500_correlation.png")
+        plt.show()
 
 
 if __name__ == '__main__':
