@@ -45,7 +45,7 @@ class Ticker():
         return self.hist["Close"].to_numpy()
 
 
-class Baseline():
+class Stocks():
     def __init__(self, start_date="2010-01-01", end_date="2022-01-01"):
         self.start_date = start_date
         self.end_date = end_date
@@ -98,5 +98,5 @@ if __name__ == '__main__':
     if not os.path.exists(CACHE_DIR):
         os.makedirs(CACHE_DIR)
 
-    baseline = Baseline()
-    baseline.compute_correlation()
+    stocks = Stocks()
+    stocks.compute_correlation()
