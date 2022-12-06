@@ -54,7 +54,7 @@ class Stocks():
         self.tickers_to_analyze = []
         print("Retrieved current S&P500 tickers", self.all_sp500_tickers)
         for symbol in tqdm(self.all_sp500_tickers):
-            print("Setting up", symbol)
+            # print("Setting up", symbol)
             ticker = Ticker(symbol, start_date, end_date)
             self.tickers[symbol] = ticker
             if ticker.has_expected_trading_days():
